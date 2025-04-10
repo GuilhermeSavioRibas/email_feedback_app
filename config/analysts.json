@@ -1,0 +1,12 @@
+{
+    "Teste": {
+        "groups": {
+            "Service Desk": {
+                "analysts": {
+                    "Teste": "teste@teste.com"
+                },
+                "cc_emails": []
+            }
+        }
+    }
+}
