@@ -53,7 +53,7 @@ class FeedbackApp:
 
     def setup_ui(self):
         self.root.title("Kudos Manager")
-        self.root.geometry("1200x750")
+        self.root.geometry("1200x600")
 
         top_frame = ttk.Frame(self.root)
         top_frame.pack(pady=10, fill="x", padx=10)

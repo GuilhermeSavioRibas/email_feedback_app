@@ -2,7 +2,6 @@ import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-
 class SettingsWindow(tk.Toplevel):
     def __init__(self, master, config_path, analysts_path):
         super().__init__(master)
@@ -57,54 +56,53 @@ class SettingsWindow(tk.Toplevel):
             messagebox.showerror("Error", f"Failed to load config file:\n{e}")
             return
 
-        canvas = tk.Canvas(config_tab, highlightthickness=0, bg="#003134")
-        scrollbar = ttk.Scrollbar(config_tab, orient="vertical", command=canvas.yview)
-        scrollable_frame = ttk.Frame(canvas)
-        scrollable_frame.configure(style="DarkFrame.TFrame")
+        # Criar um frame principal para a aba
+        main_frame = ttk.Frame(config_tab)
+        main_frame.pack(fill="both", expand=True)
 
-        scrollable_frame.configure(width=400)
+        # Configurar o grid para centralizar o conteúdo
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(0, weight=1)
 
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
+        # Criar um frame interno para os widgets
+        content_frame = ttk.Frame(main_frame)
+        content_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="n")
-        canvas.configure(yscrollcommand=scrollbar.set, bg="#003134")
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        def center_scrollable_frame(event=None):
-            canvas_width = canvas.winfo_width()
-            if canvas_width <= 1: 
-                canvas_width = canvas.winfo_reqwidth()
-            canvas.coords(window_id, (canvas_width // 2, 0))
-
-        canvas.bind("<Configure>", center_scrollable_frame)
-
-        self.after(100, center_scrollable_frame)
+        # Configurar o grid do content_frame para centralizar os widgets
+        content_frame.columnconfigure(0, weight=1)
+        content_frame.rowconfigure(0, weight=1)  # Espaço acima
+        content_frame.rowconfigure(1, weight=0)  # Default Sender Email
+        content_frame.rowconfigure(2, weight=0)  # Template Language
+        content_frame.rowconfigure(3, weight=0)  # Botão Save
+        content_frame.rowconfigure(4, weight=1)  # Espaço abaixo
 
         style = ttk.Style()
         style.configure("DarkFrame.TFrame", background="#003134")
         style.configure("DarkLabel.TLabel", background="#003134", foreground="white")
         style.configure("DarkCombobox.TCombobox", fieldbackground="#2E5E54", background="#2E5E54", foreground="white")
 
-        def add_centered_field(label_text, var=None, widget_type="entry", values=None):
-            container = ttk.Frame(scrollable_frame)
-            container.pack(pady=10, fill="x", expand=True)
+        def add_centered_field(label_text, var=None, widget_type="entry", values=None, row=None):
+            # Criar um container para o label e o widget
+            container = ttk.Frame(content_frame)
+            container.grid(row=row, column=0, pady=10, sticky="ew")
             container.configure(style="DarkFrame.TFrame")
 
-            label = ttk.Label(container, text=label_text, style="DarkLabel.TLabel")
-            label.pack(expand=True)
+            # Configurar o grid do container para centralizar o conteúdo
+            container.columnconfigure(0, weight=1)
+            container.columnconfigure(1, weight=1)
 
+            # Adicionar o label
+            label = ttk.Label(container, text=label_text, style="DarkLabel.TLabel")
+            label.grid(row=0, column=0, padx=5, sticky="e")
+
+            # Adicionar o widget (entry ou combobox)
             if widget_type == "entry":
                 entry = ttk.Entry(container, textvariable=var, width=40)
-                entry.pack(expand=True)
+                entry.grid(row=0, column=1, padx=5, sticky="w")
                 return entry
             elif widget_type == "combobox":
                 combo = ttk.Combobox(container, textvariable=var, values=values, state="readonly", width=37, style="DarkCombobox.TCombobox")
-                combo.pack(expand=True)
+                combo.grid(row=0, column=1, padx=5, sticky="w")
                 current_value = var.get()
                 if current_value in values:
                     combo.current(values.index(current_value))
@@ -112,12 +110,14 @@ class SettingsWindow(tk.Toplevel):
                     combo.current(0)
                 return combo
 
-        self.default_email_var = tk.StringVar(value=config_data.get("default_sender_email", ""))
-        add_centered_field("Default Sender Email:", self.default_email_var)
+        # Adicionar os campos com linhas fixas
+        self.default_email_var = tk.StringVar(value=config_data.get("default_sender_email", "teste@example.com"))  # Valor padrão para teste
+        add_centered_field("Default Sender Email:", self.default_email_var, row=1)
 
         self.template_language_var = tk.StringVar(value=config_data.get("template_language", "portuguese"))
-        add_centered_field("Template Language:", self.template_language_var, "combobox", ["portuguese", "english", "spanish"])
+        add_centered_field("Template Language:", self.template_language_var, "combobox", ["portuguese", "english", "spanish"], row=2)
 
+        # Adicionar o botão Save
         def save_config_settings():
             config_data = self.load_config()
             config_data["default_sender_email"] = self.default_email_var.get().strip()
@@ -129,11 +129,13 @@ class SettingsWindow(tk.Toplevel):
             else:
                 self.lift()
 
-        button_frame = ttk.Frame(scrollable_frame)
-        button_frame.pack(pady=10, fill="x", expand=True)
-        button_frame.configure(style="DarkFrame.TFrame")
-        ttk.Button(button_frame, text="Save", command=save_config_settings).pack(expand=True)
+        button_container = ttk.Frame(content_frame)
+        button_container.grid(row=3, column=0, pady=10, sticky="ew")
+        button_container.configure(style="DarkFrame.TFrame")
+        button_container.columnconfigure(0, weight=1)
 
+        ttk.Button(button_container, text="Save", command=save_config_settings).grid(row=0, column=0)
+        
     def init_account_tab(self):
         account_tab = ttk.Frame(self.notebook)
         self.notebook.add(account_tab, text="Account Settings")
@@ -258,7 +260,7 @@ class SettingsWindow(tk.Toplevel):
         account_name_var = tk.StringVar()
         add_centered_field("Account Name:", account_name_var)
 
-        sheet_name_var = tk.StringVar(value="Sheet1")
+        sheet_name_var = tk.StringVar(valuequeue="Sheet1")
         add_centered_field("Sheet Name:", sheet_name_var)
 
         header_row_var = tk.StringVar(value="1")

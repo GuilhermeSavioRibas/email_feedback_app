@@ -1,5 +1,5 @@
 {
-    "default_sender_email": "teste@company.com",
+    "default_sender_email": "teste@teste.com",
     "accounts": {
         "Teste": {
             "sheet_name": "Sheet1",
