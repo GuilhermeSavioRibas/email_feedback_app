@@ -50,7 +50,7 @@ email_feedback_app-main/
 - **pywin32**: For Outlook integration via **win32com.client**.
 ### Install Dependencies:
 ```bash
-pip install openpyxl pywin32```
+pip install openpyxl pywin32
 ```
 ## 🚀 How to Run
 #### 1. Clone or Download the Repository:
