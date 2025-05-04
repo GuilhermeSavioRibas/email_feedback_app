@@ -56,25 +56,18 @@ class SettingsWindow(tk.Toplevel):
             messagebox.showerror("Error", f"Failed to load config file:\n{e}")
             return
 
-        # Criar um frame principal para a aba
         main_frame = ttk.Frame(config_tab)
         main_frame.pack(fill="both", expand=True)
-
-        # Configurar o grid para centralizar o conteúdo
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(0, weight=1)
-
-        # Criar um frame interno para os widgets
         content_frame = ttk.Frame(main_frame)
         content_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-
-        # Configurar o grid do content_frame para centralizar os widgets
         content_frame.columnconfigure(0, weight=1)
-        content_frame.rowconfigure(0, weight=1)  # Espaço acima
-        content_frame.rowconfigure(1, weight=0)  # Default Sender Email
-        content_frame.rowconfigure(2, weight=0)  # Template Language
-        content_frame.rowconfigure(3, weight=0)  # Botão Save
-        content_frame.rowconfigure(4, weight=1)  # Espaço abaixo
+        content_frame.rowconfigure(0, weight=1)  
+        content_frame.rowconfigure(1, weight=0)  
+        content_frame.rowconfigure(2, weight=0)  
+        content_frame.rowconfigure(3, weight=0)  
+        content_frame.rowconfigure(4, weight=1)
 
         style = ttk.Style()
         style.configure("DarkFrame.TFrame", background="#003134")
@@ -82,20 +75,13 @@ class SettingsWindow(tk.Toplevel):
         style.configure("DarkCombobox.TCombobox", fieldbackground="#2E5E54", background="#2E5E54", foreground="white")
 
         def add_centered_field(label_text, var=None, widget_type="entry", values=None, row=None):
-            # Criar um container para o label e o widget
             container = ttk.Frame(content_frame)
             container.grid(row=row, column=0, pady=10, sticky="ew")
             container.configure(style="DarkFrame.TFrame")
-
-            # Configurar o grid do container para centralizar o conteúdo
             container.columnconfigure(0, weight=1)
             container.columnconfigure(1, weight=1)
-
-            # Adicionar o label
             label = ttk.Label(container, text=label_text, style="DarkLabel.TLabel")
             label.grid(row=0, column=0, padx=5, sticky="e")
-
-            # Adicionar o widget (entry ou combobox)
             if widget_type == "entry":
                 entry = ttk.Entry(container, textvariable=var, width=40)
                 entry.grid(row=0, column=1, padx=5, sticky="w")
@@ -110,14 +96,12 @@ class SettingsWindow(tk.Toplevel):
                     combo.current(0)
                 return combo
 
-        # Adicionar os campos com linhas fixas
         self.default_email_var = tk.StringVar(value=config_data.get("default_sender_email", "teste@example.com"))  # Valor padrão para teste
         add_centered_field("Default Sender Email:", self.default_email_var, row=1)
 
         self.template_language_var = tk.StringVar(value=config_data.get("template_language", "portuguese"))
         add_centered_field("Template Language:", self.template_language_var, "combobox", ["portuguese", "english", "spanish"], row=2)
 
-        # Adicionar o botão Save
         def save_config_settings():
             config_data = self.load_config()
             config_data["default_sender_email"] = self.default_email_var.get().strip()
@@ -389,11 +373,9 @@ class SettingsWindow(tk.Toplevel):
             with open(self.analysts_path, 'w', encoding='utf-8') as f:
                 json.dump(analysts_data, f, indent=4)
 
-            # Atualizar o dropdown de contas na aba Account Settings
             self.account_dropdown["values"] = list(config_data["accounts"].keys())
             self.account_dropdown.set(account_name)
 
-            # Disparar evento para recarregar a lista de contas na interface principal (se aplicável)
             self.accounts_data = config_data.get("accounts", {})
             self.account_dropdown.event_generate("<<ComboboxSelected>>")
 
@@ -583,7 +565,6 @@ class SettingsWindow(tk.Toplevel):
         try:
             with open(self.analysts_path, 'w', encoding='utf-8') as f:
                 json.dump(self.analysts_data, f, indent=4)
-            # Recarregar os dados dos analistas
             with open(self.analysts_path, 'r', encoding='utf-8') as f:
                 self.analysts_data = json.load(f)
             if messagebox.askyesno("Success", "Analyst data saved successfully!\n\nDo you want to close the settings window?"):
@@ -728,3 +709,4 @@ class SettingsWindow(tk.Toplevel):
         x = (self.winfo_screenwidth() // 2) - (w // 2)
         y = (self.winfo_screenheight() // 2) - (h // 2)
         self.geometry(f"{w}x{h}+{x}+{y}")
+        

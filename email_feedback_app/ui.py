@@ -75,29 +75,24 @@ class FeedbackApp:
         settings_btn = ttk.Button(top_frame, text="⚙️ Settings", command=self.open_settings)
         settings_btn.pack(side=tk.RIGHT, padx=10)
 
-        # Vincular o evento de seleção ao carregamento dos feedbacks
         self.account_dropdown.bind("<<ComboboxSelected>>", lambda event: self.load_feedbacks())
 
     def refresh_data(self):
         self.root.config(cursor="wait")
         self.root.update()
         try:
-            # Recarregar a configuração do config.json
             self.config = load_config("config/config.json")
             self.raw_feedbacks = self.load_all_feedbacks()
             self.all_feedbacks = filter_and_process_feedbacks(self.raw_feedbacks)
-            # Recarregar a configuração de analistas
             self.analysts_config = load_analysts_config()
-            # Atualizar o dropdown de contas
             account_list = list(self.all_feedbacks.keys())
             self.account_dropdown.config(values=account_list)
-            self.account_dropdown.update()  # Força a atualização do widget
+            self.account_dropdown.update() 
             if account_list and not self.selected_account.get():
                 self.selected_account.set(account_list[0])
-            # Recarregar os feedbacks exibidos
             self.load_feedbacks()
         except Exception as e:
-            print(f"Error refreshing data: {e}")  # Mantém o log de erro para debugging futuro, se necessário
+            print(f"Error refreshing data: {e}")
         finally:
             self.root.config(cursor="")
 
@@ -107,8 +102,8 @@ class FeedbackApp:
             config_path="config/config.json",
             analysts_path="config/analysts.json"
         )
-        self.root.wait_window(settings_window)  # Espera a janela de configurações ser fechada
-        self.refresh_data()  # Recarrega os dados, incluindo a lista de contas
+        self.root.wait_window(settings_window)
+        self.refresh_data()
 
     def setup_table(self):
         self.tree = ttk.Treeview(self.root, columns=("Ticket", "User", "Message", "Analyst", "Action"), show="headings", height=20, selectmode="browse")
@@ -143,13 +138,11 @@ class FeedbackApp:
             messagebox.showerror("Error", f"No data available for account: {account}")
             return
 
-        # Criar e exibir o indicador de carregamento
         self.root.config(cursor="wait")
         loading_label = ttk.Label(self.root, text="Loading... ⏳", background="#003134", foreground="white", font=("Segoe UI", 12, "bold"))
         loading_label.place(relx=0.5, rely=0.5, anchor="center")
         self.root.update()
 
-        # Processar os feedbacks
         filtered = filter_and_process_feedbacks({account: self.raw_feedbacks[account]})
         self.all_feedbacks[account] = filtered.get(account, [])
 
@@ -157,7 +150,6 @@ class FeedbackApp:
         self.display_feedbacks()
         self.generate_btn.config(state="normal")
 
-        # Remover o indicador de carregamento
         loading_label.destroy()
         self.root.config(cursor="")
 

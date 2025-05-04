@@ -1,7 +1,7 @@
 @echo off
 title Email Feedback App - Initializing...
 
-REM Check if Python is installed
+REM
 python --version >nul 2>&1
 IF %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Python is not installed or not in the PATH.
