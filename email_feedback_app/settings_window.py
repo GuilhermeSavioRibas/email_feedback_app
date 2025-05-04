@@ -260,10 +260,10 @@ class SettingsWindow(tk.Toplevel):
         account_name_var = tk.StringVar()
         add_centered_field("Account Name:", account_name_var)
 
-        sheet_name_var = tk.StringVar(valuequeue="Sheet1")
+        sheet_name_var = tk.StringVar()
         add_centered_field("Sheet Name:", sheet_name_var)
 
-        header_row_var = tk.StringVar(value="1")
+        header_row_var = tk.StringVar()
         add_centered_field("Header Row:", header_row_var)
 
         ticket_id_var = tk.StringVar()
@@ -389,11 +389,12 @@ class SettingsWindow(tk.Toplevel):
             with open(self.analysts_path, 'w', encoding='utf-8') as f:
                 json.dump(analysts_data, f, indent=4)
 
+            # Atualizar o dropdown de contas na aba Account Settings
             self.account_dropdown["values"] = list(config_data["accounts"].keys())
             self.account_dropdown.set(account_name)
 
+            # Disparar evento para recarregar a lista de contas na interface principal (se aplicável)
             self.accounts_data = config_data.get("accounts", {})
-
             self.account_dropdown.event_generate("<<ComboboxSelected>>")
 
             messagebox.showinfo("Success", f"Account '{account_name}' added successfully!")
@@ -582,6 +583,9 @@ class SettingsWindow(tk.Toplevel):
         try:
             with open(self.analysts_path, 'w', encoding='utf-8') as f:
                 json.dump(self.analysts_data, f, indent=4)
+            # Recarregar os dados dos analistas
+            with open(self.analysts_path, 'r', encoding='utf-8') as f:
+                self.analysts_data = json.load(f)
             if messagebox.askyesno("Success", "Analyst data saved successfully!\n\nDo you want to close the settings window?"):
                 self.destroy()
             else:

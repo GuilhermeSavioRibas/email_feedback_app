@@ -3,8 +3,40 @@
         "groups": {
             "Service Desk": {
                 "analysts": {
-                    "Teste": "teste@teste.com"
+                    "Teste": "teste@teste.com",
+                    "User Test": "user.test@teste.com"
                 },
+                "cc_emails": []
+            }
+        }
+    },
+    "Teste2": {
+        "groups": {
+            "Service Desk": {
+                "analysts": {
+                    "Teste2": "teste2@teste.com",
+                    "User Test": "user.test@test.com"
+                },
+                "cc_emails": []
+            },
+            "After": {
+                "analysts": {},
+                "cc_emails": [
+                    "teste2.1@teste.com"
+                ]
+            }
+        }
+    },
+    "Teste3": {
+        "groups": {
+            "Service Desk": {
+                "analysts": {
+                    "User Test": "user.test@test.com"
+                },
+                "cc_emails": []
+            },
+            "After": {
+                "analysts": {},
                 "cc_emails": []
             }
         }
